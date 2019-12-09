@@ -32,3 +32,7 @@
 pub mod clustering {
     pub use linfa_clustering::*;
 }
+
+pub mod neighbors {
+    pub use linfa_neighbors::*;
+}
