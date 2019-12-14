@@ -1,31 +1,37 @@
+use ndarray::prelude::*;
+
 mod algorithm;
+mod hyperparameters;
 
 pub use algorithm::*;
+pub use hyperparameters::*;
 
 pub enum AlgorithmType {
-    Auto,
     BallTree,
     Brute,
     KDTree,
 }
 
-pub struct NearestNeighbors;
+pub struct NearestNeighbors {
+    data: Array2<f64>,
+}
 
 impl NearestNeighbors {
-    pub fn fit(algorithm: AlgorithmType) {
-        match algorithm {
+    pub fn fit(hyperparameters: NearestNeighborsHyperParameters, input: Array2<f64>) -> NearestNeighbors {
+      let data = match hyperparameters.algorithm() {
             AlgorithmType::BallTree => {
-                BallTree::fit();
+                BallTree::fit(input)
             }
             AlgorithmType::Brute => {
-                unimplemented!();
+                input
             }
             AlgorithmType::KDTree => {
-                KDTree::fit();
+                KDTree::fit(input)
             }
-            AlgorithmType::Auto => {
-                BallTree::fit();
-            }
+        };
+
+        NearestNeighbors {
+            data
         }
     }
 }

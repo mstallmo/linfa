@@ -1,15 +1,23 @@
+use ndarray::prelude::*;
+
+pub trait Tree {
+    fn fit(data: Array2::<f64>) -> Array2::<f64>;
+}
+
 pub struct BallTree;
 
-impl BallTree {
-    pub fn fit() {
+impl Tree for BallTree {
+    fn fit(data: Array2::<f64>) -> Array2::<f64>{
         println!("You called fit on a Ball Tree!");
+        data
     }
 }
 
 pub struct KDTree;
 
-impl KDTree {
-    pub fn fit() {
-        println!("You called fit on a KDTree!");
+impl Tree for KDTree {
+    fn fit(data: Array2::<f64>) -> Array2::<f64> {
+        println!("You called fit on a KD Tree!");
+        data
     }
 }
