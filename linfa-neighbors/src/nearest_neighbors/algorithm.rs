@@ -7,7 +7,7 @@ pub trait Tree {
 pub struct BallTree;
 
 impl Tree for BallTree {
-    fn fit(data: Array2::<f64>) -> Array2::<f64>{
+    fn fit(data: Array2::<f64>) -> Array2::<f64> {
         println!("You called fit on a Ball Tree!");
         data
     }
