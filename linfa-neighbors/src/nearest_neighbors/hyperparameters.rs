@@ -1,36 +1,36 @@
 pub struct NearestNeighborsHyperParameters {
-    algorithm: crate::AlgorithmType,
+    n_neighbors: usize,
 }
 
 pub struct NearestNeighborsHyperParametersBuilder {
-    algorithm: crate::AlgorithmType,
+    n_neighbors: usize,
 }
 
 impl NearestNeighborsHyperParametersBuilder {
-   pub fn algorithm(mut self, algorithm: crate::AlgorithmType) -> Self {
-       self.algorithm = algorithm;
+   pub fn n_neighbors(mut self, n_neighbors: usize) -> Self {
+       self.n_neighbors = n_neighbors;
        self
    }
 
     pub fn build(self) -> NearestNeighborsHyperParameters {
-        NearestNeighborsHyperParameters::build(self.algorithm)
+        NearestNeighborsHyperParameters::build(self.n_neighbors)
     }
 }
 
 impl NearestNeighborsHyperParameters {
     pub fn new() -> NearestNeighborsHyperParametersBuilder {
         NearestNeighborsHyperParametersBuilder {
-            algorithm: crate::AlgorithmType::BallTree,
+            n_neighbors: 5
         }
     }
 
-    pub fn algorithm(self) -> crate::AlgorithmType {
-        self.algorithm
+    pub fn n_neighbors(self) -> usize {
+        self.n_neighbors
     }
 
-    pub fn build(algorithm: crate::AlgorithmType) -> NearestNeighborsHyperParameters {
+    pub fn build(n_neighbors: usize) -> NearestNeighborsHyperParameters {
         NearestNeighborsHyperParameters {
-            algorithm
+            n_neighbors
         }
     }
 }

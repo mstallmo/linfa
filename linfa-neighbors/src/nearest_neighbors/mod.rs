@@ -12,26 +12,14 @@ pub enum AlgorithmType {
     KDTree,
 }
 
-pub struct NearestNeighbors {
-    algorithm: Box<dyn Algorithm>,
+pub struct NearestNeighbors<A: Algorithm> {
+    algorithm: A,
 }
 
-impl NearestNeighbors {
-    pub fn new(hyperparameters: NearestNeighborsHyperParameters) -> Self {
-        match hyperparameters.algorithm() {
-            AlgorithmType::Brute => {
-                NearestNeighbors {
-                    algorithm: Box::new(Brute::default())
-                }
-            }
-            AlgorithmType::BallTree => {
-                NearestNeighbors {
-                    algorithm: Box::new(BallTree::default())
-                }
-            }
-            _ => {
-                unimplemented!();
-            }
+impl <A: Algorithm> NearestNeighbors <A> {
+    pub fn new(algorithm: A, hyperparameters: NearestNeighborsHyperParameters) -> NearestNeighbors<A> {
+        NearestNeighbors {
+            algorithm
         }
     }
 

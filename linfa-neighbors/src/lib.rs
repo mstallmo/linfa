@@ -11,9 +11,9 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let parameters = NearestNeighborsHyperParameters::new().algorithm(AlgorithmType::Brute).build();
+        let parameters = NearestNeighborsHyperParameters::new().build();
         let other_test = array![[1., 2.], [3. , 4.], [5., 6.]];
-        let nbr = NearestNeighbors::new(parameters).fit(other_test);
+        let nbr = NearestNeighbors::new(Brute::default(),parameters).fit(other_test);
 
         let sample_input = array![[1., 1.], [5., 6.]];
         let distances = nbr.kneighbors(&sample_input);
