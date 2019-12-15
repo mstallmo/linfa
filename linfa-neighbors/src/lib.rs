@@ -13,7 +13,7 @@ mod tests {
     fn it_works() {
         let parameters = NearestNeighborsHyperParameters::new().algorithm(AlgorithmType::Brute).build();
         let other_test = array![[1., 2.], [3. , 4.], [5., 6.]];
-        let nbr = NearestNeighbors::fit(parameters, other_test);
+        let nbr = NearestNeighbors::new(parameters).fit(other_test);
 
         let sample_input = array![[1., 1.], [5., 6.]];
         let distances = nbr.kneighbors(&sample_input);

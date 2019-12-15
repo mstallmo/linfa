@@ -5,7 +5,6 @@ mod hyperparameters;
 
 pub use algorithm::*;
 pub use hyperparameters::*;
-use std::ops::Index;
 
 pub enum AlgorithmType {
     BallTree,
@@ -14,41 +13,34 @@ pub enum AlgorithmType {
 }
 
 pub struct NearestNeighbors {
-    data: Array2<f64>,
+    algorithm: Box<dyn Algorithm>,
 }
 
 impl NearestNeighbors {
-    pub fn fit(hyperparameters: NearestNeighborsHyperParameters, input: Array2<f64>) -> NearestNeighbors {
-        let data = match hyperparameters.algorithm() {
-            AlgorithmType::BallTree => {
-                BallTree::fit(input)
-            }
+    pub fn new(hyperparameters: NearestNeighborsHyperParameters) -> Self {
+        match hyperparameters.algorithm() {
             AlgorithmType::Brute => {
-                input
+                NearestNeighbors {
+                    algorithm: Box::new(Brute::default())
+                }
             }
-            AlgorithmType::KDTree => {
-                KDTree::fit(input)
+            AlgorithmType::BallTree => {
+                NearestNeighbors {
+                    algorithm: Box::new(BallTree::default())
+                }
             }
-        };
-
-        NearestNeighbors {
-            data
+            _ => {
+                unimplemented!();
+            }
         }
     }
 
-    pub fn kneighbors(&self, x: &Array2<f64>) -> Vec<f64> {
-        x.outer_iter()
-            .flat_map(|elem| {
-                self.data.outer_iter()
-                    .map(move |inner_elem| {
-                        calculate_euclidan(&elem, &inner_elem)
-                    })
-            }).collect()
+    pub fn fit(mut self, input: Array2<f64>) -> Self {
+        self.algorithm.fit(input);
+        self
     }
-}
 
-fn calculate_euclidan(point1: &ArrayView1<f64>, point2: &ArrayView1<f64>) -> f64 {
-    let x_diff = (point2.index(0) - point1.index(0)).powi(2);
-    let y_diff = (point2.index(1) - point1.index(1)).powi(2);
-    (x_diff + y_diff).sqrt()
+    pub fn kneighbors(&self, x: &Array2<f64>) -> Vec<f64> {
+        self.algorithm.query(x)
+    }
 }
