@@ -1,4 +1,5 @@
 use ndarray::prelude::*;
+use ndarray::{Data, RemoveAxis};
 
 mod algorithm;
 mod hyperparameters;
@@ -16,19 +17,23 @@ pub struct NearestNeighbors<A: Algorithm> {
     algorithm: A,
 }
 
-impl <A: Algorithm> NearestNeighbors <A> {
-    pub fn new(algorithm: A, hyperparameters: NearestNeighborsHyperParameters) -> NearestNeighbors<A> {
+impl<A: Algorithm> NearestNeighbors<A> {
+    pub fn new(algorithm: A, _hyperparameters: NearestNeighborsHyperParameters) -> NearestNeighbors<A> {
         NearestNeighbors {
             algorithm
         }
     }
 
-    pub fn fit(mut self, input: Array2<f64>) -> Self {
-        self.algorithm.fit(input);
+    pub fn fit<I: Data<Elem=f64>, D: Dimension + RemoveAxis>(mut self, input: ArrayBase<I, D>) -> Self {
+//        self.algorithm.fit(input);
         self
     }
 
-    pub fn kneighbors(&self, x: &Array2<f64>) -> Vec<f64> {
-        self.algorithm.query(x)
+    pub fn kneighbors<I, D>(&self, x: ArrayBase<I, D>) -> Vec<f64>
+        where
+            I: Data<Elem=f64>,
+            D: Dimension + RemoveAxis
+    {
+        self.algorithm.query(&x)
     }
 }

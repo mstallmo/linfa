@@ -1,40 +1,29 @@
 use ndarray::prelude::*;
-use std::ops::Index;
+use ndarray::{Data, RemoveAxis};
 
 pub trait Algorithm {
-    fn fit(&mut self, data: Array2<f64>);
-    fn query(&self, x: &Array2<f64>) -> Vec<f64>;
+    fn query<I: Data<Elem=f64>, Dim: Dimension + RemoveAxis>(&self, x: &ArrayBase<I, Dim>) -> Vec<f64>;
 }
 
 #[derive(Default)]
-pub struct BallTree {
-    data: Array2<f64>
+pub struct Brute<D: Dimension + RemoveAxis> {
+    data: Array<f64, D>
 }
 
-impl Algorithm for BallTree {
-    fn fit(&mut self, data: Array2<f64>) {
-        self.data = data;
-    }
-
-    fn query(&self, x: &Array2<f64>) -> Vec<f64> {
-        vec![0.0, 0.0, 0.0]
+impl<D: Dimension + RemoveAxis> Brute<D> {
+    pub fn new(data: Array<f64, D>) -> Self {
+        Brute {
+            data
+        }
     }
 }
 
-#[derive(Default)]
-pub struct KDTree;
-
-#[derive(Default)]
-pub struct Brute {
-    data: Array2<f64>
-}
-
-impl Algorithm for Brute {
-    fn fit(&mut self, data: Array2<f64>) {
-        self.data = data;
-    }
-
-    fn query(&self, x: &Array2<f64>) -> Vec<f64> {
+impl<D: Dimension + RemoveAxis> Algorithm for Brute<D> {
+    fn query<I, Dim>(&self, x: &ArrayBase<I, Dim>) -> Vec<f64>
+        where
+            I: Data<Elem=f64>,
+            Dim: Dimension + RemoveAxis
+    {
         x.outer_iter()
             .flat_map(|elem| {
                 self.data.outer_iter()
@@ -45,9 +34,15 @@ impl Algorithm for Brute {
     }
 }
 
-
-fn calculate_euclidan(point1: &ArrayView1<f64>, point2: &ArrayView1<f64>) -> f64 {
-    let x_diff = (point2.index(0) - point1.index(0)).powi(2);
-    let y_diff = (point2.index(1) - point1.index(1)).powi(2);
-    (x_diff + y_diff).sqrt()
+fn calculate_euclidan<A, D, E>(point1: &ArrayBase<A, D>, point2: &ArrayBase<A, E>) -> f64
+    where
+        A: Data<Elem=f64>,
+        D: Dimension,
+        E: Dimension,
+{
+    point2.iter()
+        .zip(point1.iter())
+        .map(|(&elem2, &elem1)| {
+            (elem2 - elem1).powi(2)
+        }).sum::<f64>().sqrt()
 }
